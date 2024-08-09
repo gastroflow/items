@@ -2,7 +2,7 @@
   "name": "Rezepte",
   "short_name": "Rezepte",
   "description": "Eine App für Rezepte",
-  "start_url": "/",
+  "start_url": "/items",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4A90E2",
