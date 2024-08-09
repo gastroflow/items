@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Kitchen Rezept-App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hidden {
+            display: none;
+        }
+        .category-nav {
+            position: sticky;
+            top: 1rem;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .chip {
+            display: flex;
+            align-items: center;
+            background-color: #e5e7eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            height: 3rem;
+        }
+        .chip svg {
+            margin-right: 0.75rem;
+        }
+        .search-input {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            width: 100%;
+            max-width: 400px;
+            outline: none;
+            transition: border-color 0.2s;
+            height: 3rem;
+        }
+        .search-input:focus {
+            border-color: #cbd5e0;
+        }
+        .search-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 3rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-4">
+        <div id="content">
+            <!-- Content will be dynamically injected here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contentDiv = document.getElementById('content');
+
+            const brands = ['Marke A', 'Marke B', 'Marke C'];
+            const categories = ['Vorspeisen', 'Hauptgerichte', 'Desserts', 'Suppen', 'Salate'];
+            const recipes = [
+                {
+                    id: 1,
+                    name: 'Bruschetta',
+                    category: 'Vorspeisen',
+                    brand: 'Marke A',
+                    image: 'https://via.placeholder.com/300x200?text=Bruschetta',
+                    ingredients: [
+                        { name: 'Baguette', amount: '1 Stück' },
+                        { name: 'Tomaten', amount: '4 Stück' },
+                        { name: 'Knoblauch', amount: '2 Zehen' },
+                        { name: 'Olivenöl', amount: '2 EL' },
+                        { name: 'Basilikum', amount: 'Nach Geschmack' }
+                    ],
+                    equipment: ['Ofen', 'Messer', 'Schneidebrett'],
+                    instructions: '1. Baguette in Scheiben schneiden\n2. Tomaten würfeln und mit Knoblauch, Öl und Basilikum mischen\n3. Brotscheiben im Ofen rösten\n4. Tomatenmischung auf geröstetes Brot geben'
+                },
+                {
+                    id: 2,
+                    name: 'Caesar Salad',
+                    category: 'Salate',
+                    brand: 'Marke B',
+                    image: 'https://via.placeholder.com/300x200?text=Caesar+Salad',
+                    ingredients: [
+                        { name: 'Römersalat', amount: '1 Kopf' },
+                        { name: 'Croutons', amount: '100g' },
+                        { name: 'Parmesan', amount: '50g' },
+                        { name: 'Caesar Dressing', amount: '100ml' }
+                    ],
+                    equipment: ['Salatschüssel', 'Messer', 'Reibe'],
+                    instructions: '1. Salat waschen und in mundgerechte Stücke schneiden\n2. Croutons und geriebenen Parmesan vorbereiten\n3. Salat mit Dressing mischen\n4. Mit Croutons und Parmesan garnieren'
+                },
+                {
+                    id: 3,
+                    name: 'Spaghetti Bolognese',
+                    category: 'Hauptgerichte',
+                    brand: 'Marke A',
+                    image: 'https://via.placeholder.com/300x200?text=Spaghetti+Bolognese',
+                    ingredients: [
+                        { name: 'Spaghetti', amount: '500g' },
+                        { name: 'Hackfleisch', amount: '400g' },
+                        { name: 'Tomatenpassata', amount: '500ml' },
+                        { name: 'Zwiebeln', amount: '2 Stück' },
+                        { name: 'Knoblauch', amount: '2 Zehen' }
+                    ],
+                    equipment: ['Topf', 'Pfanne', 'Messer', 'Kochlöffel'],
+                    instructions: '1. Zwiebeln und Knoblauch fein hacken\n2. Hackfleisch anbraten, Zwiebeln und Knoblauch dazugeben\n3. Tomatenpassata hinzufügen und köcheln lassen\n4. Spaghetti kochen\n5. Spaghetti mit Sauce servieren'
+                },
+                {
+                    id: 4,
+                    name: 'Tiramisu',
+                    category: 'Desserts',
+                    brand: 'Marke C',
+                    image: 'https://via.placeholder.com/300x200?text=Tiramisu',
+                    ingredients: [
+                        { name: 'Löffelbiskuits', amount: '200g' },
+                        { name: 'Mascarpone', amount: '250g' },
+                        { name: 'Eier', amount: '3 Stück' },
+                        { name: 'Zucker', amount: '100g' },
+                        { name: 'Espresso', amount: '200ml' },
+                        { name: 'Kakaopulver', amount: 'Zum Bestäuben' }
+                    ],
+                    equipment: ['Schüssel', 'Mixer', 'Auflaufform'],
+                    instructions: '1. Eigelb mit Zucker schaumig schlagen\n2. Mascarpone unterrühren\n3. Eiweiß steif schlagen und unterheben\n4. Löffelbiskuits in Espresso tränken\n5. Abwechselnd Creme und Biskuits schichten\n6. Mit Kakao bestäuben und kühlen'
+                },
+                {
+                    id: 5,
+                    name: 'Tomatensuppe',
+                    category: 'Suppen',
+                    brand: 'Marke A',
+                    image: 'https://via.placeholder.com/300x200?text=Tomatensuppe',
+                    ingredients: [
+                        { name: 'Tomaten', amount: '1kg' },
+                        { name: 'Zwiebeln', amount: '2 Stück' },
+                        { name: 'Knoblauch', amount: '3 Zehen' },
+                        { name: 'Olivenöl', amount: '2 EL' },
+                        { name: 'Gemüsebrühe', amount: '500ml' }
+                    ],
+                    equipment: ['Topf', 'Mixer', 'Messer'],
+                    instructions: '1. Zwiebeln und Knoblauch hacken\n2. Tomaten würfeln\n3. Zwiebeln und Knoblauch anbraten, Tomaten hinzufügen\n4. Brühe hinzugeben und köcheln lassen\n5. Suppe pürieren'
+                },
+                {
+                    id: 6,
+                    name: 'Gulaschsuppe',
+                    category: 'Suppen',
+                    brand: 'Marke B',
+                    image: 'https://via.placeholder.com/300x200?text=Gulaschsuppe',
+                    ingredients: [
+                        { name: 'Rindfleisch', amount: '500g' },
+                        { name: 'Paprika', amount: '3 Stück' },
+                        { name: 'Zwiebeln', amount: '2 Stück' },
+                        { name: 'Tomatenmark', amount: '2 EL' },
+                        { name: 'Rinderbrühe', amount: '1L' }
+                    ],
+                    equipment: ['Topf', 'Messer', 'Kochlöffel'],
+                    instructions: '1. Fleisch würfeln und anbraten\n2. Zwiebeln und Paprika hacken, hinzufügen\n3. Tomatenmark und Brühe hinzugeben und köcheln lassen'
+                },
+                {
+                    id: 7,
+                    name: 'Griechischer Salat',
+                    category: 'Salate',
+                    brand: 'Marke C',
+                    image: 'https://via.placeholder.com/300x200?text=Griechischer+Salat',
+                    ingredients: [
+                        { name: 'Tomaten', amount: '4 Stück' },
+                        { name: 'Gurke', amount: '1 Stück' },
+                        { name: 'Feta', amount: '200g' },
+                        { name: 'Oliven', amount: '100g' },
+                        { name: 'Olivenöl', amount: '4 EL' }
+                    ],
+                    equipment: ['Schüssel', 'Messer'],
+                    instructions: '1. Tomaten und Gurke würfeln\n2. Feta zerbröseln\n3. Alles in eine Schüssel geben und mit Olivenöl beträufeln'
+                },
+                {
+                    id: 8,
+                    name: 'Ratatouille',
+                    category: 'Hauptgerichte',
+                    brand: 'Marke A',
+                    image: 'https://via.placeholder.com/300x200?text=Ratatouille',
+                    ingredients: [
+                        { name: 'Zucchini', amount: '2 Stück' },
+                        { name: 'Aubergine', amount: '1 Stück' },
+                        { name: 'Paprika', amount: '2 Stück' },
+                        { name: 'Tomaten', amount: '4 Stück' },
+                        { name: 'Olivenöl', amount: '4 EL' }
+                    ],
+                    equipment: ['Ofen', 'Messer', 'Schneidebrett'],
+                    instructions: '1. Gemüse in Scheiben schneiden\n2. In eine Auflaufform schichten\n3. Mit Olivenöl beträufeln und im Ofen backen'
+                },
+                {
+                    id: 9,
+                    name: 'Apfelstrudel',
+                    category: 'Desserts',
+                    brand: 'Marke B',
+                    image: 'https://via.placeholder.com/300x200?text=Apfelstrudel',
+                    ingredients: [
+                        { name: 'Äpfel', amount: '5 Stück' },
+                        { name: 'Blätterteig', amount: '1 Rolle' },
+                        { name: 'Zucker', amount: '100g' },
+                        { name: 'Zimt', amount: '1 TL' },
+                        { name: 'Rosinen', amount: '50g' }
+                    ],
+                    equipment: ['Ofen', 'Messer', 'Backblech'],
+                    instructions: '1. Äpfel schälen und schneiden\n2. Mit Zucker, Zimt und Rosinen mischen\n3. In den Blätterteig einrollen und backen'
+                },
+                {
+                    id: 10,
+                    name: 'Minestrone',
+                    category: 'Suppen',
+                    brand: 'Marke C',
+                    image: 'https://via.placeholder.com/300x200?text=Minestrone',
+                    ingredients: [
+                        { name: 'Karotten', amount: '3 Stück' },
+                        { name: 'Zucchini', amount: '2 Stück' },
+                        { name: 'Tomaten', amount: '4 Stück' },
+                        { name: 'Bohnen', amount: '200g' },
+                        { name: 'Gemüsebrühe', amount: '1L' }
+                    ],
+                    equipment: ['Topf', 'Messer'],
+                    instructions: '1. Gemüse würfeln\n2. In Brühe garen\n3. Bohnen hinzufügen und köcheln lassen'
+                }
+            ];
+
+            function showBrands() {
+                contentDiv.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${brands.map(brand => `
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:shadow-lg transition-shadow duration-300" onclick="selectBrand('${brand}')">
+                                <div class="flex flex-col space-y-1.5 p-6">
+                                    <img src="https://via.placeholder.com/300x200?text=${brand}" alt="${brand}" class="w-full h-40 object-cover rounded-md mb-4"/>
+                                    <h3 class="text-2xl font-semibold text-center">${brand}</h3>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            function showRecipes(brand) {
+    contentDiv.innerHTML = `
+        <div class="flex justify-between mb-4 items-center">
+            <div class="chip" onclick="showBrands()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                ${brand}
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Rezept suchen..." class="search-input">
+            </div>
+        </div>
+        <div class="flex flex-col md:flex-row">
+            <div class="w-full md:w-1/4 mb-6 md:mb-0 md:mr-6">
+                <nav class="category-nav">
+                    <h2 class="text-xl font-bold mb-4">Kategorien</h2>
+                    <ul>
+                        ${categories.map(category => `
+                            <li class="mb-2">
+                                <button 
+                                    class="w-full text-left p-2 rounded hover:bg-gray-200"
+                                    onclick="scrollToCategory('${category}')"
+                                >
+                                    ${category}
+                                </button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </nav>
+            </div>
+            <div class="w-full md:w-3/4" id="recipesList">
+                ${categories.map(category => `
+                    <div id="${category}" class="mb-8">
+                        <h2 class="text-2xl font-bold mb-4 mt-8">${category}</h2>
+                        <div class="grid grid-cols-1 gap-6">
+                            ${recipes.filter(recipe => recipe.brand === brand && recipe.category === category)
+                                .map(recipe => `
+                                    <div class="flex rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:shadow-lg transition-shadow duration-300" onclick="showRecipeDetail(${recipe.id})">
+                                        <img src="${recipe.image}" alt="${recipe.name}" class="w-40 h-40 object-cover rounded-l-lg"/>
+                                        <div class="p-4 flex-grow">
+                                            <h3 class="text-lg font-semibold mb-2">${recipe.name}</h3>
+                                            <p class="text-sm text-gray-600 mb-2">${recipe.category}</p>
+                                            <p class="text-sm"><strong>Zutaten:</strong> ${recipe.ingredients.map(i => i.name).join(', ')}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    // Add event listener for search input
+    document.getElementById('searchInput').addEventListener('input', function(event) {
+        const query = event.target.value.toLowerCase();
+        const recipeCards = document.querySelectorAll('#recipesList .flex');
+        recipeCards.forEach(card => {
+            const recipeName = card.querySelector('h3').innerText.toLowerCase();
+            if (recipeName.includes(query)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+}
+
+function scrollToCategory(category) {
+    document.getElementById(category).scrollIntoView({ behavior: 'smooth' });
+}
+
+function showRecipeDetail(recipeId) {
+    const recipe = recipes.find(r => r.id === recipeId);
+    contentDiv.innerHTML = `
+        <div class="chip" onclick="showRecipes('${recipe.brand}')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                <path d="M19 12H5M12 19l-7-7 7-7"></path>
+            </svg>
+            <span>Alle Gerichte</span>
+        </div>
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
+            <div class="flex">
+                <img src="${recipe.image}" alt="${recipe.name}" class="w-2/5 h-full object-cover"/>
+                <div class="p-6 w-3/5">
+                    <h2 class="text-3xl font-bold mb-2">${recipe.name}</h2>
+                    <p class="text-lg mb-4">${recipe.category} | ${recipe.brand}</p>
+                    <h3 class="text-xl font-semibold mb-4">Zutaten</h3>
+                    <ul class="space-y-2 mb-4">
+                        ${recipe.ingredients.map((ingredient, index) => `
+                            <li key=${index} class="flex items-center">
+                                <span class="w-1/3 font-medium">${ingredient.amount}</span>
+                                <span>${ingredient.name}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <h3 class="text-xl font-semibold mb-4">Benötigte Geräte</h3>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${recipe.equipment.map((item, index) => `
+                            <span key=${index} class="bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700">${item}</span>
+                        `).join('')}
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Zubereitung</h3>
+                    <p class="whitespace-pre-line">${recipe.instructions}</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.selectBrand = function(brand) {
+    showRecipes(brand);
+};
+
+window.scrollToCategory = function(category) {
+    scrollToCategory(category);
+};
+
+window.showRecipeDetail = function(recipeId) {
+    showRecipeDetail(recipeId);
+};
+
+window.showRecipes = function(brand) {
+    showRecipes(brand);
+};
+
+showBrands();
+});
+</script>
+</body>
+</html>
